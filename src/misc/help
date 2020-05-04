@@ -1,0 +1,13 @@
+Usage: client [option] [args...]
+
+Options:
+	-v 	    
+	--version   print the product version
+	-s          
+	--send      send message to ([option] ip port) 
+	-r          
+        --receptor  run receptor in local port(default or specified)
+	-h
+	--help      display this help 
+Arguments:
+	-port       port where receptor is going to listen

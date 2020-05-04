@@ -5,6 +5,7 @@
  */
 package clientClipboardCLI;
 
+import InputOutput.fileReader;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -12,6 +13,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -29,13 +31,18 @@ public class main {
             System.out.println("error:missing arguments");
             System.exit(0);
         }
-        ClipboardOwner owner = new ClipboardOwner() {
+        ClipboardOwner owner = (Clipboard clipboard, Transferable contents) -> {
+            System.out.println("text replaced");
+            System.exit(0);
+        };
+        
+        fileReader fr = new fileReader(new File("help")){
             @Override
-            public void lostOwnership(Clipboard clipboard, Transferable contents) {
-                System.out.println("text replaced");
-                System.exit(0);
+            public void lineProcesser(String line){
+                System.out.println(line);
             }
         };
+        
         messageHandler HANDLER = new messageHandler() {
             @Override
             public void TextMessageReceiveFromClient(Socket clientSocket, String data) {
@@ -68,7 +75,7 @@ public class main {
         };
         
         if ("--help".startsWith(args[0]) || args[0].equals("-h")) {
-            System.out.println("what do you want from me?...");
+            fr.readFile();
         }else if("--version".startsWith(args[0]) || args[0].equals("-v")){
             System.out.println("game of the year edition(definitive version)");
         }else if("--receptor".startsWith(args[0]) || args[0].equals("-r")){
@@ -119,8 +126,5 @@ public class main {
     private static void setStringToClipboard(String str, ClipboardOwner owner){
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(str), owner);
     }
-    
-    
-
     
 }
